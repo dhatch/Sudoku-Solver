@@ -1,24 +1,25 @@
 import argparse
+
 def log(s):
     global args
     if args.verbose:
         print s
  
-class Suduko(object):
-    """docstring for Suduko"""
+class Sudoku(object):
+    """docstring for sudoku"""
     @classmethod
-    def suduko_from_iterator(cls, iterator):
+    def sudoku_from_iterator(cls, iterator):
         """must contain lines which contain characters"""
-        return Suduko([[i for i in line.strip()] for line in iterator])
+        return Sudoku([[int(i) for i in line.strip()] for line in iterator])
     def __init__(self, array):
-        super(Suduko, self).__init__()
+        super(Sudoku, self).__init__()
         self.array = array
         
     def __str__(self):
         s = ""
         for x in self.array:
             for i in x:
-                s += i
+                s += str(i)
             s += "\n"
         return s
     
@@ -27,6 +28,7 @@ class Suduko(object):
     #(8,8) is bottom right
     #(x,y) x is column, y is row
     def row(self, y):
+        log("row returned %s" % self.array[y])
         return self.array[y]
     def column(self, x):
         return [i[x] for i in self.array]
@@ -34,7 +36,28 @@ class Suduko(object):
     #numbered 0,1,2,... from top left to bottom right
     def box(self, n):
         return [[x for x in i[(n % 3)*3:(n % 3)*3 + 3]] for i in self.array[(n//3)*3:(n//3)*3 + 3]]
-
+        
+    def boxContaining(self, x, y):
+        return self.box((x//3) + (y//3)*3)
+        
+    #def solvers
+    def fill(self):
+        """fill empty grid with possibilities"""
+        #fill empty spaces, removing non possible numbers
+        row_i = 0
+        space_i = 0
+        for row in self.array:
+            for space in row:
+                #calculate possibilities
+                if space == 0:
+                    the_set = set([1,2,3,4,5,6,7,8,9]) - set(row)#-set(self.column(space_i))-set(self.boxContaining(row_i,space_i)))
+                    log("the_set: %s" % the_set)
+                    self.array[row_i][space_i] = the_set
+                space_i += 1
+            row_i += 1
+            space_i = 0
+        log("Possibilities calculated by as:\n%s" % self)
+                
 #how many zeros are in this list?
 def num_zero(array):
     count = 0
@@ -43,22 +66,22 @@ def num_zero(array):
     return count
     
 def main():
-    global suduko
+    global sudoku
     global args
     #setup argument parser
-    parser = argparse.ArgumentParser(description="Solves Suduko Puzzles.")
-    parser.add_argument('file_handle', type=open, help="name of file to load for suduko puzzle", metavar="filename")
+    parser = argparse.ArgumentParser(description="Solves sudoku Puzzles.")
+    parser.add_argument('file_handle', type=open, help="name of file to load for sudoku puzzle", metavar="filename")
     parser.add_argument('-v', '--verbose', help='produce detailed output', action='store_true')
     #gather arguments in namespace
     args = parser.parse_args()
     log(args)
     #GO!
-    #create the 2D list to represent 9*9 suduko
-    suduko = Suduko.suduko_from_iterator(args.file_handle)
-    log("Read suduko file as\n%s" % str(suduko))
+    #create the 2D list to represent 9*9 sudoku
+    sudoku = Sudoku.sudoku_from_iterator(args.file_handle)
+    log("Read sudoku file as\n%s" % str(sudoku))
     
-    #find path of least resistance
-    #eg, column, box, or row with least empty spaces
+    #fill empty spaces with possibilities
+    #sudoku.fill()
     
 if __name__ == '__main__':
     main()
