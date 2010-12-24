@@ -16,6 +16,13 @@ class Sudoku(object):
     def sudoku_from_iterator(cls, iterator):
         """must contain lines which contain characters"""
         return Sudoku([[int(i) for i in line.strip()] for line in iterator])
+    @classmethod
+    def is_solution(cls, array):
+        for row in array: 
+            if 0 in row:
+                return False
+        return True
+
     def __init__(self, array):
         super(Sudoku, self).__init__()
         self.array = array
@@ -48,10 +55,7 @@ class Sudoku(object):
         return s
         
     def solved(self):
-        for row in self.array: 
-            if 0 in row:
-                return False
-        return True
+        return Sudoku.is_solution(self.array)
     
     def valid(self):
         for x in xrange(9):
@@ -120,7 +124,36 @@ class Sudoku(object):
             space_i = 0
         #return the number of replacements we made
         return replace_count
+    
+    #backtracking algorithm, will return the solution.
+    def backtrack(self):
+        if self.valid(): 
+            return self
+        #pick the easiest location to solve
+        row_i = 0
+        column_i = 0
+        minimum = None
+        min_row = 0
+        min_col = 0
+        for row in self.possibilities:
+            for column in row:
+                if (minimum == None or len(column) < minimum) and type(column) == set:
+                    min_row = row_i
+                    min_col = column_i
+                    minimum = len(column)
+                column_i += 1
+            row_i += 1
+            column_i = 0
+        for x in self.possibilities[min_row][min_col]:
+            reccur_on = Suduko(self.array)
+            reccur_on.array[min_row][min_col] = x
+            reccur_on.find()
+            solution = reccur_on.backtrack()
+            if solution != None:
+                return solution
         
+        return None
+            
 #how many zeros are in this list?
 def num_zero(array):
     count = 0
