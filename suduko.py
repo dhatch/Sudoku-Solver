@@ -150,6 +150,7 @@ class Sudoku(object):
             reccur_on.find()
             solution = reccur_on.backtrack()
             if solution != None:
+                self.array = solution
                 return solution
         
         return None
@@ -186,14 +187,22 @@ def main():
         solve_number = sudoku.fill()
         log("Reduction round using possible value rules produced:\n%s\nSolved %i spaces" % (sudoku, solve_number))
     log("Finished using basic rules. Reduced to:\n%s" % sudoku)
-    print "Solved in %s." % datetime.timedelta(seconds=time.clock()-start_time)
-    print sudoku
+    if not sudoku.solved():
+        log("solving with backtracking")
+        solved = sudoku.backtrack()
+    if solved:
+        print "Solved in %s." % datetime.timedelta(seconds=time.clock()-start_time)
+        print sudoku 
+    else:
+        print "Unsolvable"
+        
+   
     if args.checkvalidity:
         print "Checking Validity..."
         if sudoku.valid():
             print "Solution Valid!"
         else:
-            print "Please retry. There has been an error."
+            print "Please retry. There has been an error or there is no solution."
     
 if __name__ == '__main__':
     main()
