@@ -9,6 +9,7 @@ def log(s):
  
 
 class Sudoku(object):
+    global args
     """represents the sudoku game board"""
     @classmethod
     def sudoku_from_iterator(cls, iterator):
@@ -20,12 +21,47 @@ class Sudoku(object):
         
     def __str__(self):
         s = ""
-        for x in self.array:
-            for i in x:
-                s += str(i)
-            s += "\n"
+        if args.prettyoutput:
+            s += "-"*13+"\n|"
+            ycount = 1
+            for x in self.array:
+                if ycount % 4 == 0:
+                    s += "|\n|"+"-"*11
+                    ycount += 1
+                if ycount != 1:
+                    s += "|\n|"
+                xcount = 1
+                for i in x:
+                    if xcount % 4 == 0:
+                        s += "|"
+                        xcount += 1
+                    s += str(i)
+                    xcount += 1
+                ycount += 1
+            s += "|\n"+"-"*13
+        else:
+            for x in self.array:
+                for i in x:
+                    s += str(i)
+                s += "\n"
         return s
+        
+    def solved(self):
+        for row in self.array: 
+            if 0 in row:
+                return False
+        return True
     
+    def valid(self):
+        for x in xrange(9):
+            if sum(self.column(x)) != 45:
+                return False
+            if sum(self.row(x)) != 45:
+                return False
+            if sum(self.box(x)) != 45:
+                return False
+        return True
+
     #grid functions
     #(0,0) is top left
     #(8,8) is bottom right
@@ -48,6 +84,9 @@ class Sudoku(object):
     def fill(self):
         """fill empty grid with possibilities and populate the self.possibilities matrix"""
         #fill empty spaces, removing non possible numbers
+        if self.solved():
+            return -1
+        
         row_i = 0
         space_i = 0
         #copy the state of the array
@@ -71,7 +110,9 @@ class Sudoku(object):
                 if type(space) == set:
                     #if it's a set and it contains 1 element, replace it in both arrays with the element
                     if len(space) == 1:
-                        self.array[row_i][space_i], self.possibilities[row_i][space_i] = space.pop()
+                        num = space.pop()
+                        self.array[row_i][space_i] = num
+                        self.possibilities[row_i][space_i] = num
                         #count this as a replacement to return
                         replace_count += 1
                 space_i += 1
@@ -94,16 +135,21 @@ def main():
     parser = argparse.ArgumentParser(description="Solves sudoku Puzzles.")
     parser.add_argument('file_handle', type=open, help="name of file to load for sudoku puzzle", metavar="filename")
     parser.add_argument('-v', '--verbose', help='produce detailed output', action='store_true')
+    parser.add_argument('-p', '--prettyoutput', help="print a nicely formatted output", action='store_true')
     #gather arguments in namespace
     args = parser.parse_args()
     log(args)
     #GO!
     #create the 2D list to represent 9*9 sudoku
     sudoku = Sudoku.sudoku_from_iterator(args.file_handle)
-    log("Read sudoku file as\n%s" % str(sudoku))
-    
-    #fill empty spaces with possibilities
-    sudoku.fill()
+    log("File Input:\n%s" % str(sudoku))
+    print "Solving..."
+    #simplify with basic sudoku rules
+    solve_number = None
+    while solve_number != 0 and not suduko.solved():
+        solve_number = sudoku.fill()
+        log("Reduced Using Possible Value Rules:\n%s\nSolved %i spaces" % (sudoku, solve_number))
+    log("Finished using basic rules. Reduced to:\n%s" % sudoku)
     
 if __name__ == '__main__':
     main()
