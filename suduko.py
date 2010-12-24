@@ -58,7 +58,7 @@ class Sudoku(object):
                 return False
             if sum(self.row(x)) != 45:
                 return False
-            if sum(self.box(x)) != 45:
+            if sum([item for sublist in self.box(x) for item in sublist]) != 45:
                 return False
         return True
 
@@ -67,7 +67,6 @@ class Sudoku(object):
     #(8,8) is bottom right
     #(x,y) x is column, y is row
     def row(self, y):
-        log("row returned %s" % self.array[y])
         return self.array[y]
     def column(self, x):
         return [i[x] for i in self.array]
@@ -146,10 +145,17 @@ def main():
     print "Solving..."
     #simplify with basic sudoku rules
     solve_number = None
-    while solve_number != 0 and not suduko.solved():
+    while solve_number != 0 and not sudoku.solved():
         solve_number = sudoku.fill()
-        log("Reduced Using Possible Value Rules:\n%s\nSolved %i spaces" % (sudoku, solve_number))
+        log("Reduction round using possible value rules produced:\n%s\nSolved %i spaces" % (sudoku, solve_number))
     log("Finished using basic rules. Reduced to:\n%s" % sudoku)
+    print "Solved."
+    print sudoku
+    print "Checking Validity..."
+    if sudoku.valid():
+        print "Solution Valid!"
+    else:
+        print "Please retry. There has been an error."
     
 if __name__ == '__main__':
     main()
