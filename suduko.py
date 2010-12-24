@@ -136,7 +136,7 @@ def main():
     parser.add_argument('file_handle', type=open, help="name of file to load for sudoku puzzle", metavar="filename")
     parser.add_argument('-v', '--verbose', help='produce detailed output', action='store_true')
     parser.add_argument('-p', '--prettyoutput', help="print a nicely formatted output", action='store_true')
-    parser.add_argument('-q', '--quickmode', help='skip validity checking', action='store_true')
+    parser.add_argument('--checkvalidity', help='check validity after solving. shouldn\'t be needed', action='store_true')
     #gather arguments in namespace
     args = parser.parse_args()
     log(args)
@@ -155,7 +155,7 @@ def main():
     log("Finished using basic rules. Reduced to:\n%s" % sudoku)
     print "Solved in %s." % datetime.timedelta(seconds=time.clock()-start_time)
     print sudoku
-    if not args.quickmode:
+    if args.checkvalidity:
         print "Checking Validity..."
         if sudoku.valid():
             print "Solution Valid!"
