@@ -1,12 +1,15 @@
 import argparse
+from copy import deepcopy
 
+#logger function, only works if verbose mode is active
 def log(s):
     global args
     if args.verbose:
         print s
  
+
 class Sudoku(object):
-    """docstring for sudoku"""
+    """represents the sudoku game board"""
     @classmethod
     def sudoku_from_iterator(cls, iterator):
         """must contain lines which contain characters"""
@@ -37,26 +40,28 @@ class Sudoku(object):
     def box(self, n):
         return [[x for x in i[(n % 3)*3:(n % 3)*3 + 3]] for i in self.array[(n//3)*3:(n//3)*3 + 3]]
         
-    def boxContaining(self, x, y):
+    def boxContaining(self, x, y): 
+        """get the box which contains the element at the position defined by (x,y)"""
         return self.box((x//3) + (y//3)*3)
         
     #def solvers
     def fill(self):
-        """fill empty grid with possibilities"""
+        """fill empty grid with possibilities and populate the self.possibilities matrix"""
         #fill empty spaces, removing non possible numbers
         row_i = 0
         space_i = 0
+        #copy the state of the array
+        self.possibilities = deepcopy(self.array)
         for row in self.array:
             for space in row:
-                #calculate possibilities
+                #calculate possibilities by removing the numbers already in the row, column and box
                 if space == 0:
-                    the_set = set([1,2,3,4,5,6,7,8,9]) - set(row)#-set(self.column(space_i))-set(self.boxContaining(row_i,space_i)))
-                    log("the_set: %s" % the_set)
-                    self.array[row_i][space_i] = the_set
+                    the_set = set([1,2,3,4,5,6,7,8,9]) - set(row) - set(self.column(space_i)) - set([item for sublist in self.boxContaining(space_i, row_i) for item in sublist])
+                    self.possibilities[row_i][space_i] = the_set
                 space_i += 1
             row_i += 1
             space_i = 0
-        log("Possibilities calculated by as:\n%s" % self)
+        log("Possibilities calculated by as:\n%s" % self.possibilities)
                 
 #how many zeros are in this list?
 def num_zero(array):
@@ -81,7 +86,7 @@ def main():
     log("Read sudoku file as\n%s" % str(sudoku))
     
     #fill empty spaces with possibilities
-    #sudoku.fill()
+    sudoku.fill()
     
 if __name__ == '__main__':
     main()
