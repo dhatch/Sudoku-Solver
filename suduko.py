@@ -7,7 +7,12 @@ def log(s):
     global args
     if args.verbose:
         print s
- 
+
+def interactive(s): #prints when interactive enabled
+    global args
+    if args.interactive:
+        raw_input(s + "\nEnter to continue...")
+
 
 class Sudoku(object):
     global args
@@ -127,6 +132,7 @@ class Sudoku(object):
     
     #backtracking algorithm, will return the solution.
     def backtrack(self):
+        interactive("%d began backtracking algorithm" % hash(self))
         if self.valid(): 
             return self
         #pick the easiest location to solve
@@ -137,21 +143,26 @@ class Sudoku(object):
         min_col = 0
         for row in self.possibilities:
             for column in row:
-                if (minimum == None or len(column) < minimum) and type(column) == set:
-                    min_row = row_i
-                    min_col = column_i
-                    minimum = len(column)
+                if type(column) == set:
+                    if (minimum == None or len(column) < minimum):
+                        min_row = row_i
+                        min_col = column_i
+                        minimum = len(column)
                 column_i += 1
             row_i += 1
             column_i = 0
+        interactive("%d picked %s as easiest to solve" % (hash(self), self.possibilities[min_row][min_col]))
         for x in self.possibilities[min_row][min_col]:
-            reccur_on = Suduko(self.array)
+            interactive("%d tried %d to solve" % (hash(self), x))
+            reccur_on = Sudoku(self.array)
             reccur_on.array[min_row][min_col] = x
-            reccur_on.find()
+            interactive("\n%s\n created \n%s\n to begin backtrack recursivley" % (self, reccur_on))
+            reccur_on.fill()
             solution = reccur_on.backtrack()
             if solution != None:
                 self.array = solution
                 return solution
+            interactive("solution fell through at %d" % hash(self))
         
         return None
             
@@ -171,6 +182,7 @@ def main():
     parser.add_argument('-v', '--verbose', help='produce detailed output', action='store_true')
     parser.add_argument('-p', '--prettyoutput', help="print a nicely formatted output", action='store_true')
     parser.add_argument('--checkvalidity', help='check validity after solving. shouldn\'t be needed', action='store_true')
+    parser.add_argument('-i', '--interactive', help='go through the algorithm with pauses step by step', action='store_true')
     #gather arguments in namespace
     args = parser.parse_args()
     log(args)
@@ -186,8 +198,10 @@ def main():
     while solve_number != 0 and not sudoku.solved():
         solve_number = sudoku.fill()
         log("Reduction round using possible value rules produced:\n%s\nSolved %i spaces" % (sudoku, solve_number))
+        interactive("Basic simplification round produced:\n%s\nSolved %d locations" % (sudoku, solve_number))
     log("Finished using basic rules. Reduced to:\n%s" % sudoku)
     if not sudoku.solved():
+        interactive("Sudoku not yet solved.  Beginning backtracking method.")
         log("solving with backtracking")
         solved = sudoku.backtrack()
     if solved:
