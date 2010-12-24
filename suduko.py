@@ -62,7 +62,24 @@ class Sudoku(object):
             row_i += 1
             space_i = 0
         log("Possibilities calculated by as:\n%s" % self.possibilities)
-                
+        #detect possibilities that can be replaced with a number
+        row_i = 0
+        space_i = 0
+        replace_count = 0
+        for row in self.possibilities: 
+            for space in row:
+                if type(space) == set:
+                    #if it's a set and it contains 1 element, replace it in both arrays with the element
+                    if len(space) == 1:
+                        self.array[row_i][space_i], self.possibilities[row_i][space_i] = space.pop()
+                        #count this as a replacement to return
+                        replace_count += 1
+                space_i += 1
+            row_i += 1
+            space_i = 0
+        #return the number of replacements we made
+        return replace_count
+        
 #how many zeros are in this list?
 def num_zero(array):
     count = 0
