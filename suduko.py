@@ -1,4 +1,5 @@
 import argparse
+import time, datetime
 from copy import deepcopy
 
 #logger function, only works if verbose mode is active
@@ -143,14 +144,16 @@ def main():
     #create the 2D list to represent 9*9 sudoku
     sudoku = Sudoku.sudoku_from_iterator(args.file_handle)
     log("File Input:\n%s" % str(sudoku))
+    start_time = time.clock()
     print "Solving..."
     #simplify with basic sudoku rules
     solve_number = None
+    #loop through here till we're solved or there is no more possible simplifications
     while solve_number != 0 and not sudoku.solved():
         solve_number = sudoku.fill()
         log("Reduction round using possible value rules produced:\n%s\nSolved %i spaces" % (sudoku, solve_number))
     log("Finished using basic rules. Reduced to:\n%s" % sudoku)
-    print "Solved."
+    print "Solved in %s." % datetime.timedelta(seconds=time.clock()-start_time)
     print sudoku
     if not args.quickmode:
         print "Checking Validity..."
