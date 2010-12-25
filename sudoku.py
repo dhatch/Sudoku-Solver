@@ -204,7 +204,7 @@ def main():
     #GO!
     #create the 2D list to represent 9*9 sudoku
     sudoku = Sudoku.sudoku_from_iterator(args.file_handle)
-    log("File Input:\n%s" % str(sudoku))
+    print "Input:\n%s" % str(sudoku)
     start_time = time.clock()
     print "Solving..."
     #simplify with basic sudoku rules
