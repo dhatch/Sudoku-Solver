@@ -2,13 +2,12 @@ A Suduko Solver written in python for the Forrst Code Challenge.
 
 [Original Code Challenge](http://forr.st/~047)
 
-# Requires:
+### Requires: ###
 - Python 2.7
 
 **usage:** sudoku.py \[-h\] \[-v\] \[-p\] \[--checkvalidity\] \[-i\] filename
 
-positional arguments:
---------------------
+### positional arguments: ###
 
     filename            name of file to load for sudoku puzzle
 
