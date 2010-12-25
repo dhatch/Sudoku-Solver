@@ -2,16 +2,18 @@ A Suduko Solver written in python for the Forrst Code Challenge.
 
 [Original Code Challenge](http://forr.st/~047)
 
-**Requires:**
+# Requires:
 - Python 2.7
 
 **usage:** sudoku.py \[-h\] \[-v\] \[-p\] \[--checkvalidity\] \[-i\] filename
 
 
-**positional arguments:**
+positional arguments:
+====================
     filename            name of file to load for sudoku puzzle
 
-**optional arguments:**
+optional arguments:
+==================
     -h, --help          show this help message and exit  
     -v, --verbose       produce detailed output
     -p, --prettyoutput  print a nicely formatted output
@@ -22,6 +24,7 @@ A Suduko Solver written in python for the Forrst Code Challenge.
 **Note**: you probably want to use the -p option to produce more readable output.
 
 Output Without -p:
+==================
     815493762
     362875149
     479261853
@@ -33,6 +36,7 @@ Output Without -p:
     937648521
 
 Output With -p:
+==============
     -------------
     |815|493|762|
     |362|875|149|
