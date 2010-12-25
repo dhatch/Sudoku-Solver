@@ -48,7 +48,10 @@ class Sudoku(object):
                     if xcount % 4 == 0:
                         s += "|"
                         xcount += 1
-                    s += str(i)
+                    if i == 0:
+                        s += " "
+                    else:
+                        s += str(i)
                     xcount += 1
                 ycount += 1
             s += "|\n"+"-"*13
