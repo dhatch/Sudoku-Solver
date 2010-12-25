@@ -96,23 +96,8 @@ class Sudoku(object):
         if self.valid():
             return -1
         
-        row_i = 0
-        space_i = 0
-        #copy the state of the array
-        self.possibilities = deepcopy(self.array)
-        for row in self.array:
-            for space in row:
-                #calculate possibilities by removing the numbers already in the row, column and box
-                if space == 0:
-                    the_set = set([1,2,3,4,5,6,7,8,9]) - set(row) - set(self.column(space_i)) - set([item for sublist in self.boxContaining(space_i, row_i) for item in sublist])
-                    if the_set == set():
-                        #if no solution (because a spot becomes impossible to fill, fall through)
-                        return -1
-                    self.possibilities[row_i][space_i] = the_set
-                space_i += 1
-            row_i += 1
-            space_i = 0
-        log("Possibilities calculated by as:\n%s" % self.possibilities)
+        self.calculatePossibilities()
+        
         #detect possibilities that can be replaced with a number
         row_i = 0
         space_i = 0
@@ -133,10 +118,31 @@ class Sudoku(object):
         #return the number of replacements we made
         return replace_count
     
+    def calculatePossibilities(self):
+        """calculate the possibilities without performing filling when there is only 1 option"""
+        row_i = 0
+        space_i = 0
+        #copy the state of the array
+        self.possibilities = deepcopy(self.array)
+        for row in self.array:
+            for space in row:
+                #calculate possibilities by removing the numbers already in the row, column and box
+                if space == 0:
+                    the_set = set([1,2,3,4,5,6,7,8,9]) - set(row) - set(self.column(space_i)) - set([item for sublist in self.boxContaining(space_i, row_i) for item in sublist])
+                    if the_set == set():
+                        #if no solution (because a spot becomes impossible to fill, fall through)
+                        return -1
+                    self.possibilities[row_i][space_i] = the_set
+                space_i += 1
+            row_i += 1
+            space_i = 0
+        log("Possibilities calculated by as:\n%s" % self.possibilities)
+        return 0
+        
     #backtracking algorithm, will return the solution.
     def backtrack(self):
         interactive("%d began backtracking algorithm" % hash(self))
-        log("backtracking on %s" % self)
+        log("backtracking on \n%s" % self)
         if self.valid(): 
             return self
         #pick the easiest location to solve
@@ -163,7 +169,7 @@ class Sudoku(object):
             reccur_on.array[min_row][min_col] = x
             interactive("\n%s\n created \n%s\nposition (%d,%d) changed\n to begin backtrack recursivley" % (self, reccur_on,min_row,min_col))
             solution = None
-            if reccur_on.fill() != -1:
+            if reccur_on.calculatePossibilities() != -1:
                 solution = reccur_on.backtrack()
             if solution != None:
                 self.array = solution.array
