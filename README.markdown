@@ -8,8 +8,8 @@ A Suduko Solver written in python for the Forrst Code Challenge.
 **usage:** sudoku.py \[-h\] \[-v\] \[-p\] \[--checkvalidity\] \[-i\] filename
 
 
-positional arguments:
-====================
+# positional arguments:
+
     filename            name of file to load for sudoku puzzle
 
 optional arguments:
