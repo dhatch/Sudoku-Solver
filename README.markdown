@@ -19,10 +19,10 @@ A Suduko Solver written in python for the Forrst Code Challenge.
     --checkvalidity     check validity after solving. shouldn't be needed
     -i, --interactive   go through the algorithm with pauses step by step
 
----
+----------------------------------------------------------------------------------
 **Note**: you probably want to use the -p option to produce more readable output.
 
-### Output Without -p: ###
+#### Output Without -p: ####
     815493762
     362875149
     479261853
@@ -33,7 +33,7 @@ A Suduko Solver written in python for the Forrst Code Challenge.
     246519387
     937648521
 
-### Output With -p: ###
+#### Output With -p: ####
     -------------
     |815|493|762|
     |362|875|149|
@@ -47,3 +47,14 @@ A Suduko Solver written in python for the Forrst Code Challenge.
     |246|519|387|
     |937|648|521|
     -------------
+    
+### Algorithm Details ###
+
+1. Use basic sudoku rules to produce possible values for board
+2. If there are spaces that must contain a value based on the possible values, fill them.
+3. Repeat from step 1 as long as new values are being filled.
+4. If board is still unsolved, begin [backtracking](http://www.cse.ohio-state.edu/~gurari/course/cis680/cis680Ch19.html) algorithm.
+5. Start by choosing easiest square to solve (least possible solutions).
+6. Choose a solution and create a new board instance, build it's possible values list (*but without filling*) and continue backtracking on that board.
+7. Continue steps 4-6 recursively
+8. Return solution or no possible solution.
