@@ -5,7 +5,8 @@ A Suduko Solver written in python for the Forrst Code Challenge.
 ### Requires: ###
 - Python 2.7
 
-**usage:** sudoku.py \[-h\] \[-v\] \[-p\] \[--checkvalidity\] \[-i\] filename
+### usage: ###
+    sudoku.py \[-h\] \[-v\] \[-p\] \[--checkvalidity\] \[-i\] filename
 
 ### positional arguments: ###
 
