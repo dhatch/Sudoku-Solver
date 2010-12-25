@@ -93,7 +93,7 @@ class Sudoku(object):
     def fill(self):
         """fill empty grid with possibilities and populate the self.possibilities matrix"""
         #fill empty spaces, removing non possible numbers
-        if self.solved():
+        if self.valid():
             return -1
         
         row_i = 0
@@ -105,6 +105,9 @@ class Sudoku(object):
                 #calculate possibilities by removing the numbers already in the row, column and box
                 if space == 0:
                     the_set = set([1,2,3,4,5,6,7,8,9]) - set(row) - set(self.column(space_i)) - set([item for sublist in self.boxContaining(space_i, row_i) for item in sublist])
+                    if the_set == set():
+                        #if no solution (because a spot becomes impossible to fill, fall through)
+                        return -1
                     self.possibilities[row_i][space_i] = the_set
                 space_i += 1
             row_i += 1
@@ -133,14 +136,16 @@ class Sudoku(object):
     #backtracking algorithm, will return the solution.
     def backtrack(self):
         interactive("%d began backtracking algorithm" % hash(self))
+        log("backtracking on %s" % self)
         if self.valid(): 
             return self
         #pick the easiest location to solve
         row_i = 0
         column_i = 0
         minimum = None
-        min_row = 0
-        min_col = 0
+        min_row = None
+        min_col = None
+        interactive("possibilities: %s" % self.possibilities)
         for row in self.possibilities:
             for column in row:
                 if type(column) == set:
@@ -151,16 +156,17 @@ class Sudoku(object):
                 column_i += 1
             row_i += 1
             column_i = 0
-        interactive("%d picked %s as easiest to solve" % (hash(self), self.possibilities[min_row][min_col]))
+        interactive("%d picked %s at position (%d,%d) as easiest to solve" % (hash(self), self.possibilities[min_row][min_col],min_row,min_col))
         for x in self.possibilities[min_row][min_col]:
             interactive("%d tried %d to solve" % (hash(self), x))
-            reccur_on = Sudoku(self.array)
+            reccur_on = Sudoku(deepcopy(self.array))
             reccur_on.array[min_row][min_col] = x
-            interactive("\n%s\n created \n%s\n to begin backtrack recursivley" % (self, reccur_on))
-            reccur_on.fill()
-            solution = reccur_on.backtrack()
+            interactive("\n%s\n created \n%s\nposition (%d,%d) changed\n to begin backtrack recursivley" % (self, reccur_on,min_row,min_col))
+            solution = None
+            if reccur_on.fill() != -1:
+                solution = reccur_on.backtrack()
             if solution != None:
-                self.array = solution
+                self.array = solution.array
                 return solution
             interactive("solution fell through at %d" % hash(self))
         
