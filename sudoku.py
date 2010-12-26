@@ -212,16 +212,17 @@ def main():
         log("Reduction round using possible value rules produced:\n%s\nSolved %i spaces" % (sudoku, solve_number))
         interactive("Basic simplification round produced:\n%s\nSolved %d locations" % (sudoku, solve_number))
     log("Finished using basic rules. Reduced to:\n%s" % sudoku)
-    if not sudoku.solved(): #if we're still not solved...
+    if not sudoku.solved(): #if we're still not solved go to backtracking
         interactive("Sudoku not yet solved.  Beginning backtracking method.")
         log("solving with backtracking")
         solved = sudoku.backtrack() #begin backtracking, storing solution in solved
-    if solved: #if there was a solution
+        if not solved: #if there was a solution  
+            print "Error: Unsolvable"
+            solved = False
+    
+    if sudoku.solved():
         print "Solved in %s." % datetime.timedelta(seconds=time.clock()-start_time) 
         print sudoku 
-    else:
-        print "Error: Unsolvable"
-        
    
     if args.checkvalidity:
         print "Checking Validity..."
