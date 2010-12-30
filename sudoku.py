@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import argparse #module for parsing command line input
 import time, datetime #module for tracking time elapsed to solution
 from copy import deepcopy #function to copy array. used in Sudoku class
