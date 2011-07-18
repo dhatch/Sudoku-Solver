@@ -217,7 +217,7 @@ def main():
         interactive("Sudoku not yet solved.  Beginning backtracking method.")
         log("solving with backtracking")
         solved = sudoku.backtrack() #begin backtracking, storing solution in solved
-        if not solved: #if there was a solution  
+        if not solved: #if there wasn't a solution  
             print "Error: Unsolvable"
             solved = False
     
